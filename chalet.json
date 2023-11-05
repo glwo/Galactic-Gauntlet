@@ -1,0 +1,182 @@
+{
+	"version": "0.0.1",
+	"name": "Chalet Example - SFML",
+	"searchPaths[toolchain:x86_64-pc-windows-msvc]": [
+		"${external:SFML}/extlibs/bin/x64"
+	],
+	"searchPaths[toolchain:i686-pc-windows-msvc]": [
+		"${external:SFML}/extlibs/bin/x86"
+	],
+	"externalDependencies": {
+		"SFML": {
+			"kind": "git",
+			"repository": "https://github.com/SFML/SFML.git",
+			"tag": "2.6.1"
+		},
+		"catch2": {
+			"kind": "git",
+			"repository": "https://github.com/catchorg/Catch2.git",
+			"branch": "v2.x"
+		}
+	},
+	"abstracts:sfml": {
+		"language": "C++",
+		"settings:Cxx": {
+			"cppStandard": "c++20",
+			"runtimeTypeInformation": false,
+			"cppFilesystem": true,
+			"warningsPreset": "strict",
+			"treatWarningsAsErrors": true,
+			"defines[:debug]": [
+				"_DEBUG"
+			],
+			"includeDirs": [
+				"src",
+				"${external:SFML}/include"
+			],
+			"libDirs": [
+				"${externalBuild:SFML}/lib"
+			],
+			"links[:!debug]": [
+				"sfml-graphics",
+				"sfml-audio",
+				"sfml-network",
+				"sfml-window",
+				"sfml-system"
+			],
+			"links[:debug]": [
+				"sfml-graphics-d",
+				"sfml-audio-d",
+				"sfml-network-d",
+				"sfml-window-d",
+				"sfml-system-d"
+			],
+			"links[:linux+toolchain:!w64-mingw32]": [
+				"X11"
+			],
+			"links[:windows]": [
+				"gdi32",
+				"dwmapi"
+			],
+			"appleFrameworks": [
+				"CoreFoundation",
+				"CoreGraphics",
+				"FLAC",
+				"freetype",
+				"ogg",
+				"openal",
+				"vorbis",
+				"vorbisenc",
+				"vorbisfile"
+			],
+			"appleFrameworkPaths": [
+				"${external:SFML}/extlibs/libs-osx/Frameworks"
+			],
+			"windowsApplicationIcon": "platform/windows/app.ico",
+			"windowsApplicationManifest": "platform/windows/app.manifest"
+		}
+	},
+	"targets": {
+		"sfml": {
+			"kind": "cmakeProject",
+			"location": "${external:SFML}",
+			"recheck": false,
+			"rebuild": false
+		},
+		"sfml-app": {
+			"kind": "executable",
+			"extends": "sfml",
+			"files": "src/**.cpp",
+			"settings:Cxx": {
+				"precompiledHeader": "src/PCH.hpp",
+				"windowsSubSystem[:!debug]": "windows"
+			},
+			"copyFilesOnRun[toolchain:pc-windows-msvc]": [
+				"openal32.dll"
+			],
+			"copyFilesOnRun[toolchain:w64-mingw32]": [
+				"libopenal-1.dll"
+			]
+		},
+		"tests": {
+			"kind": "executable",
+			"extends": "sfml",
+			"files": [
+				"test/**.cpp",
+				"src/*/**.cpp"
+			],
+			"settings:Cxx": {
+				"buildSuffix": "sfml-app",
+				"precompiledHeader": "src/PCH.hpp",
+				"includeDirs": [
+					"${external:catch2}/single_include",
+					"test"
+				]
+			},
+			"defaultRunArguments": [
+				"-w",
+				"NoTests",
+				"-s"
+			],
+			"copyFilesOnRun[toolchain:pc-windows-msvc]": [
+				"openal32.dll"
+			],
+			"copyFilesOnRun[toolchain:w64-mingw32]": [
+				"libopenal-1.dll"
+			]
+		}
+	},
+	"distribution": {
+		"SFMLApp": {
+			"kind": "bundle",
+			"buildTargets": [
+				"sfml",
+				"sfml-app"
+			],
+			"include": [
+				"content"
+			],
+			"exclude": [
+				"*.psd",
+				"*.rar",
+				"*.7z",
+				"Thumbs.db",
+				".DS_Store"
+			],
+			"macosBundle": {
+				"type": "app",
+				"infoPropertyList": "platform/macos/Info.plist.json",
+				"entitlementsPropertyList": "platform/macos/Entitlements.plist.json",
+				"icon": "platform/sfml-logo.png"
+			},
+			"linuxDesktopEntry": {
+				"template": "platform/linux/app.desktop",
+				"icon": "platform/sfml-logo.png"
+			}
+		},
+		"SFMLApp.dmg": {
+			"kind": "macosDiskImage",
+			"pathbarVisible": false,
+			"textSize": 12,
+			"iconSize": 80,
+			"background": {
+				"1x": "platform/macos/dmg-background.png",
+				"2x": "platform/macos/dmg-background@2x.png"
+			},
+			"size": {
+				"width": 512,
+				"height": 342
+			},
+			"positions": {
+				"SFMLApp": {
+					"x": 120,
+					"y": 188
+				},
+				"Applications": {
+					"x": 392,
+					"y": 188
+				}
+			}
+		}
+	}
+}
