@@ -62,19 +62,30 @@ public:
 		// Implement player's movement and shooting logic here
 		// You can use keyboard or mouse input for control
 
-		// Apply acceleration based on arrow key input
 		if (isLeftKeyPressed)
 		{
 			// Rotate the ship to the left
 			playerShape.rotate(-rotationSpeed);
+
+			// If the up arrow is also pressed, apply acceleration
+			if (isUpKeyPressed)
+			{
+				// Calculate the direction vector for the ship's current rotation
+				float radians = playerShape.getRotation() * 3.14159265f / 180.0f;
+				sf::Vector2f direction(std::sin(radians), -std::cos(radians));
+
+				// Apply acceleration in the forward direction
+				velocity += direction * acceleration;
+			}
 		}
+
 		if (isRightKeyPressed)
 		{
 			// Rotate the ship to the right
 			playerShape.rotate(rotationSpeed);
 		}
 
-		if (isUpKeyPressed)
+		if (isUpKeyPressed && !isLeftKeyPressed)
 		{
 			// Calculate the direction vector for the ship's current rotation
 			float radians = playerShape.getRotation() * 3.14159265f / 180.0f;
@@ -84,11 +95,6 @@ public:
 			velocity += direction * acceleration;
 		}
 
-		// Calculate the direction vector for the ship's current rotation
-		float radians = playerShape.getRotation() * 3.14159265f / 180.0f;
-		sf::Vector2f direction(std::sin(radians), -std::cos(radians));
-
-		// Shooting logic
 		if (isSpaceKeyPressed)
 		{
 			// Check if enough time has passed since the last shot
