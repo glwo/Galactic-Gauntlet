@@ -11,6 +11,9 @@ public:
     Player(sf::RenderWindow& window);
     void update();
     void draw(sf::RenderWindow& window);
+    bool isCollidingWithAsteroid(const Asteroid& asteroid) const;
+    void handleAsteroidCollision(const Asteroid& asteroid);
+    bool isCollidingWithBullet(const Bullet& bullet) const;
 
 private:
     sf::ConvexShape playerShape;
@@ -23,8 +26,6 @@ private:
     sf::Clock shootingTimer;
     float shootDelay;
     sf::RenderWindow& window;
-    bool isCollidingWithAsteroid(const Asteroid& asteroid) const;
-    bool isCollidingWithBullet(const Bullet& bullet) const;
     
     void teleportToRandomLocation();
 };

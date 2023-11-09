@@ -113,6 +113,12 @@ bool Player::isCollidingWithBullet(const Bullet& bullet) const
 	return playerShape.getGlobalBounds().intersects(bullet.getBulletShape().getGlobalBounds());
 }
 
+void Player::handleAsteroidCollision([[maybe_unused]] const Asteroid& asteroid)
+{
+    // Handle the collision logic here
+    // For example, you can reduce player health, set a game over state, etc.
+}
+
 void Player::draw(sf::RenderWindow& window)
 {
 	window.draw(playerShape);
