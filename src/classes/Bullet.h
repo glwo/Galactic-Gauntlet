@@ -9,6 +9,7 @@ public:
     Bullet(sf::Vector2f position, float rotation);
     void update();
     void draw(sf::RenderWindow& window) const;
+    const sf::RectangleShape& getBulletShape() const; // Function to get the bullet's shape
 
 private:
     sf::RectangleShape bulletShape;
@@ -17,3 +18,4 @@ private:
 };
 
 #endif // BULLET_H
+

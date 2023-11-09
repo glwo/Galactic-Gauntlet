@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "Bullet.h"
+#include "Asteroid.h"
 
 class Player
 {
@@ -22,6 +23,8 @@ private:
     sf::Clock shootingTimer;
     float shootDelay;
     sf::RenderWindow& window;
+    bool isCollidingWithAsteroid(const Asteroid& asteroid) const;
+    bool isCollidingWithBullet(const Bullet& bullet) const;
     
     void teleportToRandomLocation();
 };
