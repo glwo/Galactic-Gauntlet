@@ -1,13 +1,14 @@
 #include "classes/Asteroid.h"
 #include "classes/Player.h"
+#include <SFML/Audio.hpp> // Include the audio library
 #include <SFML/Graphics.hpp>
+bool isGameOver = false;
 
 int main()
 {
 	sf::RenderWindow window;
 	window.create(sf::VideoMode(1200, 800), "Asteroids", sf::Style::Default);
 	window.setFramerateLimit(60);
-	window.clear(sf::Color::Black);
 
 	Player player(window); // Create the player object
 	std::vector<Asteroid> asteroids;
@@ -16,8 +17,8 @@ int main()
 	float asteroidSpawnInterval = 2.0f; // Adjust the interval as needed
 
 	// Example: Add some initial asteroids
-	asteroids.push_back(Asteroid::createRandomAsteroid(window));
-	asteroids.push_back(Asteroid::createRandomAsteroid(window));
+	asteroids.push_back(Asteroid::createRandomAsteroid(window, player));
+	asteroids.push_back(Asteroid::createRandomAsteroid(window, player));
 
 	while (window.isOpen())
 	{
@@ -32,43 +33,51 @@ int main()
 
 		player.update();
 
-		// Check if enough time has passed to spawn a new asteroid
-		if (asteroidSpawnTimer.getElapsedTime().asSeconds() >= asteroidSpawnInterval)
+		if (!isGameOver)
 		{
-			asteroids.push_back(Asteroid::createRandomAsteroid(window));
-
-			// Restart the timer for the next asteroid spawn
-			asteroidSpawnTimer.restart();
-		}
-
-		// Update and handle collisions for asteroids
-		// Update and handle collisions for asteroids
-		for (auto& asteroid : asteroids)
-		{
-			asteroid.update(window); // Pass the window object
-			// Check for collisions with the player
-			if (player.isCollidingWithAsteroid(asteroid))
+			if (asteroidSpawnTimer.getElapsedTime().asSeconds() >= asteroidSpawnInterval)
 			{
-				player.handleAsteroidCollision(asteroid);
+				asteroids.push_back(Asteroid::createRandomAsteroid(window, player));
+				asteroidSpawnTimer.restart();
+			}
+
+			for (auto& asteroid : asteroids)
+			{
+				asteroid.update(window);
+				if (player.isCollidingWithAsteroid(asteroid))
+				{
+					player.handleAsteroidCollision(asteroid);
+					isGameOver = true;
+				}
 			}
 		}
 
-		// Check if enough time has passed to spawn a new asteroid
-		if (asteroidSpawnTimer.getElapsedTime().asSeconds() >= asteroidSpawnInterval)
-		{
-			asteroids.push_back(Asteroid::createRandomAsteroid(window));
-
-			// Restart the timer for the next asteroid spawn
-			asteroidSpawnTimer.restart();
-		}
-
 		window.clear();
-		player.draw(window);
 
-		// Draw asteroids
-		for (const auto& asteroid : asteroids)
+		if (isGameOver)
 		{
-			asteroid.draw(window);
+			sf::Font font;
+			if (!font.loadFromFile("arial.ttf"))
+			{
+				// Handle font loading failure
+			}
+
+			sf::Text gameOverText;
+			gameOverText.setFont(font);
+			gameOverText.setString("Game Over!");
+			gameOverText.setCharacterSize(50);
+			gameOverText.setFillColor(sf::Color::Red);
+			gameOverText.setPosition(400, 300);
+
+			window.draw(gameOverText);
+		}
+		else
+		{
+			player.draw(window);
+			for (const auto& asteroid : asteroids)
+			{
+				asteroid.draw(window);
+			}
 		}
 
 		window.display();

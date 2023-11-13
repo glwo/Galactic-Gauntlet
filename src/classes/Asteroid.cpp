@@ -1,14 +1,15 @@
 // Asteroid.cpp
 #include "Asteroid.h"
 #include <random>
+#include "Player.h"
 
-Asteroid::Asteroid(sf::Vector2f position, float rotation, float size)
-{
+Asteroid::Asteroid(sf::Vector2f position, float rotation, float size) {
     asteroidShape = sf::ConvexShape(8);
     asteroidShape.setFillColor(sf::Color::Red);
     asteroidShape.setPosition(position);
     asteroidShape.setRotation(rotation);
 
+    // Utilize the 'size' parameter to scale the asteroid's shape
     asteroidShape.setPoint(0, sf::Vector2f(0, -20 * size));
     asteroidShape.setPoint(1, sf::Vector2f(10 * size, -10 * size));
     asteroidShape.setPoint(2, sf::Vector2f(20 * size, -15 * size));
@@ -21,14 +22,15 @@ Asteroid::Asteroid(sf::Vector2f position, float rotation, float size)
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<float> speedDist(2.0f, 5.0f);
-    speed = speedDist(gen);
+    float speed = speedDist(gen);
     std::uniform_real_distribution<float> angleDist(0.0f, 360.0f);
     float angle = angleDist(gen);
-    velocity = sf::Vector2f(std::cos(angle * 3.14159265f / 180.0f), std::sin(angle * 3.14159265f / 180.0f)) * speed;
+    sf::Vector2f velocity = sf::Vector2f(std::cos(angle * 3.14159265f / 180.0f), std::sin(angle * 3.14159265f / 180.0f)) * speed;
+
+    setVelocity(velocity);
 }
 
-Asteroid Asteroid::createRandomAsteroid(sf::RenderWindow& window)
-{
+Asteroid Asteroid::createRandomAsteroid(sf::RenderWindow& window, const Player& player) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<float> xDist(0.0f, static_cast<float>(window.getSize().x));
@@ -36,50 +38,52 @@ Asteroid Asteroid::createRandomAsteroid(sf::RenderWindow& window)
     std::uniform_real_distribution<float> rotationDist(0.0f, 360.0f);
     std::uniform_real_distribution<float> speedDist(1.0f, 5.0f);
 
-    sf::Vector2f position(xDist(gen), yDist(gen));
+    const float minDistance = 200.0f; // Adjust this value as needed
+
+    sf::Vector2f position;
+    float distance;
+    do {
+        position = sf::Vector2f(xDist(gen), yDist(gen));
+        distance = std::hypotf(position.x - player.getPosition().x, position.y - player.getPosition().y);
+    } while (distance < minDistance);
+
     float rotation = rotationDist(gen);
     float speed = speedDist(gen);
 
+    // std::cout << "Generated Position: (" << position.x << ", " << position.y << ")" << std::endl;
+    // std::cout << "Generated Rotation: " << rotation << std::endl;
+    // std::cout << "Generated Speed: " << speed << std::endl;
+
     Asteroid asteroid(position, rotation, 3.0f);
 
-    // Give the asteroid a random velocity in a random direction
     float angle = rotationDist(gen);
     asteroid.setVelocity(sf::Vector2f(std::cos(angle * 3.14159265f / 180.0f), std::sin(angle * 3.14159265f / 180.0f)) * speed);
 
     return asteroid;
 }
 
-void Asteroid::update(sf::RenderWindow& window)
-{
-    // Check if the asteroid has a texture (e.g., before calling asteroidShape.getTexture())
-    if (asteroidShape.getTexture())
-    {
-        // Update the asteroid's position based on its velocity
-        asteroidShape.move(velocity);
+void Asteroid::update(sf::RenderWindow& window) {
+    sf::Vector2f position = asteroidShape.getPosition();
+    sf::Vector2u windowSize = window.getSize();
+    sf::FloatRect asteroidBounds = asteroidShape.getGlobalBounds();
 
-        // Check if the asteroid is outside the screen bounds
-        sf::Vector2f position = asteroidShape.getPosition();
-        sf::Vector2u windowSize = window.getSize(); // Use the window parameter
-        float halfWidth = asteroidShape.getGlobalBounds().width / 2.0f;
-        float halfHeight = asteroidShape.getGlobalBounds().height / 2.0f;
+    // Update the asteroid's position based on its velocity
+    asteroidShape.move(velocity);
 
-        if (position.x + halfWidth < 0.0f)
-            position.x = windowSize.x + halfWidth;
-        else if (position.x - halfWidth > windowSize.x)
-            position.x = -halfWidth;
+    if (position.x + asteroidBounds.width / 2 < 0.0f)
+        asteroidShape.setPosition(windowSize.x + asteroidBounds.width / 2, position.y);
+    else if (position.x - asteroidBounds.width / 2 > windowSize.x)
+        asteroidShape.setPosition(-asteroidBounds.width / 2, position.y);
 
-        if (position.y + halfHeight < 0.0f)
-            position.y = windowSize.y + halfHeight;
-        else if (position.y - halfHeight > windowSize.y)
-            position.y = -halfHeight;
-
-        asteroidShape.setPosition(position);
-    }
+    if (position.y + asteroidBounds.height / 2 < 0.0f)
+        asteroidShape.setPosition(position.x, windowSize.y + asteroidBounds.height / 2);
+    else if (position.y - asteroidBounds.height / 2 > windowSize.y)
+        asteroidShape.setPosition(position.x, -asteroidBounds.height / 2);
 }
 
-void Asteroid::setVelocity(const sf::Vector2f& newVelocity)
-{
-    velocity = newVelocity * speed; // Multiply by speed to maintain the magnitude
+
+void Asteroid::setVelocity(const sf::Vector2f& newVelocity) {
+    velocity = newVelocity;
 }
 
 void Asteroid::draw(sf::RenderWindow& window) const
@@ -95,4 +99,19 @@ bool Asteroid::isCollidingWith(const sf::FloatRect& otherBounds) const
 const sf::ConvexShape& Asteroid::getAsteroidShape() const
 {
     return asteroidShape;
+}
+
+sf::FloatRect Asteroid::getCollisionBounds() const {
+    // Retrieve the bounds of the asteroid's shape
+    sf::FloatRect bounds = asteroidShape.getGlobalBounds();
+
+    // Reduce the bounds by a fixed factor (e.g., 30% smaller)
+    sf::FloatRect smallerBounds(
+        bounds.left + bounds.width * 0.14f,
+        bounds.top + bounds.height * 0.14f,
+        bounds.width * 0.6f,
+        bounds.height * 0.6f
+    );
+
+    return smallerBounds;
 }

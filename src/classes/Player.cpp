@@ -103,9 +103,9 @@ void Player::update()
 	}
 }
 
-bool Player::isCollidingWithAsteroid(const Asteroid& asteroid) const
-{
-	return playerShape.getGlobalBounds().intersects(asteroid.getAsteroidShape().getGlobalBounds());
+bool Player::isCollidingWithAsteroid(const Asteroid& asteroid) const {
+    // Use the smaller hitbox for asteroid collision
+    return playerShape.getGlobalBounds().intersects(asteroid.getCollisionBounds());
 }
 
 bool Player::isCollidingWithBullet(const Bullet& bullet) const
@@ -128,6 +128,11 @@ void Player::draw(sf::RenderWindow& window)
 		bullet.draw(window);
 	}
 }
+
+sf::Vector2f Player::getPosition() const {
+    return playerShape.getPosition();  // Assuming 'playerShape' is the SFML shape representing the player
+}
+
 
 void Player::teleportToRandomLocation()
 {

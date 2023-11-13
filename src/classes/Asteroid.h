@@ -4,6 +4,8 @@
 
 #include <SFML/Graphics.hpp>
 
+class Player;  // Forward declaration
+
 class Asteroid
 {
 public:
@@ -12,8 +14,10 @@ public:
     void draw(sf::RenderWindow& window) const;
     const sf::ConvexShape& getAsteroidShape() const;
     bool isCollidingWith(const sf::FloatRect& otherBounds) const;
-    static Asteroid createRandomAsteroid(sf::RenderWindow& window);
+    static Asteroid createRandomAsteroid(sf::RenderWindow& window, const Player& player);
     void setVelocity(const sf::Vector2f& newVelocity);
+    static constexpr float AsteroidHitboxMultiplier = 0.5f;
+    sf::FloatRect getCollisionBounds() const;
 
 private:
     sf::ConvexShape asteroidShape;
