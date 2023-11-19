@@ -9,7 +9,8 @@
 #include <vector>
 
 Player::Player(sf::RenderWindow& window) :
-	window(window)
+	window(window),
+    gameRestartRequested(false)
 {
 	playerShape = sf::ConvexShape(3);			   // Create a triangle shape
 	playerShape.setPoint(0, sf::Vector2f(0, -20)); // Set the top as the front of the ship
@@ -155,4 +156,21 @@ void Player::teleportToRandomLocation()
 	{
 		return;
 	}
+}
+
+
+bool Player::isGameRestartRequested() const
+{
+    return gameRestartRequested;
+}
+
+void Player::resetGame()
+{
+    gameRestartRequested = false;
+    // Reset any other game-related variables as needed
+}
+
+void Player::requestGameRestart()
+{
+    gameRestartRequested = true;
 }

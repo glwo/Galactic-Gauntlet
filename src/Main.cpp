@@ -70,6 +70,37 @@ int main()
 			gameOverText.setPosition(400, 300);
 
 			window.draw(gameOverText);
+
+			// Display "Play Again" button
+			sf::Text playAgainText;
+			playAgainText.setFont(font);
+			playAgainText.setString("Play Again");
+			playAgainText.setCharacterSize(30);
+			playAgainText.setFillColor(sf::Color::White);
+			playAgainText.setPosition(430, 410); // Adjusted position
+
+			sf::RectangleShape playAgainButton(sf::Vector2f(200, 50));
+			playAgainButton.setPosition(400, 400);
+
+			// Change button color when the mouse hovers over it
+			if (playAgainButton.getGlobalBounds().contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(window))))
+			{
+				playAgainButton.setFillColor(sf::Color(100, 100, 255)); // Light blue when hovered
+				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+				{
+					// Restart the game
+					player.resetGame();
+					isGameOver = false;
+					asteroids.clear(); // Clear existing asteroids
+				}
+			}
+			else
+			{
+				playAgainButton.setFillColor(sf::Color(70, 70, 200)); // Dark blue when not hovered
+			}
+
+			window.draw(playAgainButton);
+			window.draw(playAgainText);
 		}
 		else
 		{

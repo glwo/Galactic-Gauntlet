@@ -20,6 +20,9 @@ public:
     void reduceHealth(int amount);
     int getHealth() const;
     bool isGameOver() const;
+    bool isGameRestartRequested() const;
+    void resetGame();
+    void requestGameRestart();
 
     // New method to retrieve player position
     sf::Vector2f getPosition() const;
@@ -39,6 +42,7 @@ private:
     // Additional attributes for game state and health
     int health;
     bool gameOver;
+    bool gameRestartRequested;
 
     void teleportToRandomLocation();
 };
