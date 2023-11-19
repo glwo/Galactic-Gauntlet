@@ -1,7 +1,8 @@
 #include "classes/Asteroid.h"
 #include "classes/Player.h"
-#include <SFML/Audio.hpp> // Include the audio library
+#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+
 bool isGameOver = false;
 
 int main()
@@ -10,15 +11,22 @@ int main()
 	window.create(sf::VideoMode(1200, 800), "Asteroids", sf::Style::Default);
 	window.setFramerateLimit(60);
 
-	Player player(window); // Create the player object
+	Player player(window);
 	std::vector<Asteroid> asteroids;
 
 	sf::Clock asteroidSpawnTimer;
-	float asteroidSpawnInterval = 2.0f; // Adjust the interval as needed
+	float asteroidSpawnInterval = 2.0f;
 
 	// Example: Add some initial asteroids
 	asteroids.push_back(Asteroid::createRandomAsteroid(window, player));
 	asteroids.push_back(Asteroid::createRandomAsteroid(window, player));
+
+	// Load font outside the loop
+	sf::Font font;
+	if (!font.loadFromFile("arial.ttf"))
+	{
+		// Handle font loading failure
+	}
 
 	while (window.isOpen())
 	{
@@ -47,21 +55,27 @@ int main()
 				if (player.isCollidingWithAsteroid(asteroid))
 				{
 					player.handleAsteroidCollision(asteroid);
-					isGameOver = true;
+					// Check if the player is out of lives
+					if (player.getLives() <= 0)
+					{
+						isGameOver = true;
+					}
 				}
 			}
 		}
 
 		window.clear();
 
+		// Display remaining lives
+		sf::Text livesText;
+		livesText.setFont(font); // Set the font for the lives text
+		livesText.setString("Lives: " + std::to_string(player.getLives()));
+		livesText.setCharacterSize(30);
+		livesText.setFillColor(sf::Color::White);
+		livesText.setPosition(10, 10);
+
 		if (isGameOver)
 		{
-			sf::Font font;
-			if (!font.loadFromFile("arial.ttf"))
-			{
-				// Handle font loading failure
-			}
-
 			sf::Text gameOverText;
 			gameOverText.setFont(font);
 			gameOverText.setString("Game Over!");
@@ -102,6 +116,8 @@ int main()
 			window.draw(playAgainButton);
 			window.draw(playAgainText);
 		}
+
+		// Draw remaining lives
 		else
 		{
 			player.draw(window);
@@ -111,6 +127,7 @@ int main()
 			}
 		}
 
+		window.draw(livesText); // Draw lives text outside the condition
 		window.display();
 	}
 

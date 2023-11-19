@@ -63,12 +63,12 @@ Asteroid Asteroid::createRandomAsteroid(sf::RenderWindow& window, const Player& 
 }
 
 void Asteroid::update(sf::RenderWindow& window) {
+    // Update the asteroid's position based on its velocity
+    asteroidShape.move(velocity);
+
     sf::Vector2f position = asteroidShape.getPosition();
     sf::Vector2u windowSize = window.getSize();
     sf::FloatRect asteroidBounds = asteroidShape.getGlobalBounds();
-
-    // Update the asteroid's position based on its velocity
-    asteroidShape.move(velocity);
 
     if (position.x + asteroidBounds.width / 2 < 0.0f)
         asteroidShape.setPosition(windowSize.x + asteroidBounds.width / 2, position.y);
@@ -80,6 +80,7 @@ void Asteroid::update(sf::RenderWindow& window) {
     else if (position.y - asteroidBounds.height / 2 > windowSize.y)
         asteroidShape.setPosition(position.x, -asteroidBounds.height / 2);
 }
+
 
 
 void Asteroid::setVelocity(const sf::Vector2f& newVelocity) {

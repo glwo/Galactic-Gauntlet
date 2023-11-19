@@ -10,7 +10,8 @@
 
 Player::Player(sf::RenderWindow& window) :
 	window(window),
-    gameRestartRequested(false)
+    gameRestartRequested(false),
+    lives(3)
 {
 	playerShape = sf::ConvexShape(3);			   // Create a triangle shape
 	playerShape.setPoint(0, sf::Vector2f(0, -20)); // Set the top as the front of the ship
@@ -116,8 +117,16 @@ bool Player::isCollidingWithBullet(const Bullet& bullet) const
 
 void Player::handleAsteroidCollision([[maybe_unused]] const Asteroid& asteroid)
 {
-    // Handle the collision logic here
-    // For example, you can reduce player health, set a game over state, etc.
+     lives--;
+
+    // Check if the player is out of lives
+    if (lives <= 0) {
+        gameOver = true;
+    }
+    else {
+        // If the player still has lives, teleport to a random location
+        teleportToRandomLocation();
+    }
 }
 
 void Player::draw(sf::RenderWindow& window)
@@ -167,10 +176,15 @@ bool Player::isGameRestartRequested() const
 void Player::resetGame()
 {
     gameRestartRequested = false;
+    lives = 3;
     // Reset any other game-related variables as needed
 }
 
 void Player::requestGameRestart()
 {
     gameRestartRequested = true;
+}
+
+int Player::getLives() const {
+    return lives;
 }

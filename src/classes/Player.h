@@ -23,6 +23,7 @@ public:
     bool isGameRestartRequested() const;
     void resetGame();
     void requestGameRestart();
+    int getLives() const;
 
     // New method to retrieve player position
     sf::Vector2f getPosition() const;
@@ -43,6 +44,7 @@ private:
     int health;
     bool gameOver;
     bool gameRestartRequested;
+    int lives;
 
     void teleportToRandomLocation();
 };
