@@ -10,8 +10,11 @@
 
 Player::Player(sf::RenderWindow& window) :
 	window(window),
+    invulnerable(false),
+    reviveDelay(3.0f),
     gameRestartRequested(false),
     lives(3)
+
 {
 	playerShape = sf::ConvexShape(3);			   // Create a triangle shape
 	playerShape.setPoint(0, sf::Vector2f(0, -20)); // Set the top as the front of the ship
@@ -27,6 +30,7 @@ Player::Player(sf::RenderWindow& window) :
 	teleportCooldown.restart();
 	shootingTimer.restart();
 	shootDelay = 0.25f; // 0.25 seconds delay between shots
+    
 }
 
 void Player::update()
@@ -66,6 +70,22 @@ void Player::update()
 			shootingTimer.restart();
 		}
 	}
+
+    if (invulnerable)
+    {
+        if (reviveTimer.getElapsedTime().asSeconds() < reviveDelay)
+        {
+            // Player is still in revive delay
+            float alpha = static_cast<float>(std::sin(reviveTimer.getElapsedTime().asSeconds() * 10.0f)) * 0.5f + 0.5f;
+            playerShape.setFillColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(alpha * 255)));
+        }
+        else
+        {
+            // Revive delay is over, make player fully visible and reset invulnerability
+            playerShape.setFillColor(sf::Color::White);
+            invulnerable = false;
+        }
+    }
 
 	// Apply damping to simulate space friction (optional)
 	// velocity *= damping
@@ -117,7 +137,10 @@ bool Player::isCollidingWithBullet(const Bullet& bullet) const
 
 void Player::handleAsteroidCollision([[maybe_unused]] const Asteroid& asteroid)
 {
+    if(!invulnerable){
      lives--;
+     reviveTimer.restart();
+     invulnerable = true;
 
     // Check if the player is out of lives
     if (lives <= 0) {
@@ -126,6 +149,7 @@ void Player::handleAsteroidCollision([[maybe_unused]] const Asteroid& asteroid)
     else {
         // If the player still has lives, teleport to a random location
         teleportToRandomLocation();
+    }
     }
 }
 

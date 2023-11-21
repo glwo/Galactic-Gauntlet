@@ -39,6 +39,9 @@ private:
     sf::Clock shootingTimer;
     float shootDelay;
     sf::RenderWindow& window;
+    sf::Clock reviveTimer;
+    bool invulnerable;
+    float reviveDelay;
 
     // Additional attributes for game state and health
     int health;
