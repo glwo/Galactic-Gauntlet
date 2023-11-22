@@ -212,3 +212,8 @@ void Player::requestGameRestart()
 int Player::getLives() const {
     return lives;
 }
+
+std::vector<Bullet>& Player::getBullets()
+{
+    return bullets;
+}

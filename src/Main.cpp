@@ -62,6 +62,25 @@ int main()
 					}
 				}
 			}
+
+			for (size_t i = 0; i < player.getBullets().size(); i++)
+			{
+
+				Bullet& bullet = player.getBullets()[i];
+
+				bullet.update();
+				bullet.draw(window);
+
+				// Check if the bullet is out of bounds or hit an asteroid
+				for (auto& asteroid : asteroids)
+				{
+					if (bullet.isActive() && asteroid.isCollidingWith(bullet.getBulletShape().getGlobalBounds()))
+					{
+						asteroid.destroy();
+						bullet.deactivate();
+					}
+				}
+			}
 		}
 
 		window.clear();

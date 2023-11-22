@@ -27,6 +27,7 @@ public:
 
     // New method to retrieve player position
     sf::Vector2f getPosition() const;
+    std::vector<Bullet>& getBullets();
 
 private:
     sf::ConvexShape playerShape;

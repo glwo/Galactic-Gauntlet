@@ -18,11 +18,14 @@ public:
     void setVelocity(const sf::Vector2f& newVelocity);
     static constexpr float AsteroidHitboxMultiplier = 0.5f;
     sf::FloatRect getCollisionBounds() const;
+    bool isDestroyed() const;
+    void destroy();
 
 private:
     sf::ConvexShape asteroidShape;
     sf::Vector2f velocity;
     float speed;
+    bool destroyed; 
 };
 
 #endif // ASTEROID_H
