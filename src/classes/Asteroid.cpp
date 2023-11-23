@@ -2,6 +2,8 @@
 #include "Asteroid.h"
 #include "Player.h"
 #include <random>
+#include <iostream>
+#include <SFML/System.hpp>
 
 Asteroid::Asteroid(sf::Vector2f position, float rotation, float size)
 {
@@ -70,7 +72,8 @@ void Asteroid::update(sf::RenderWindow& window)
 	// Update the asteroid's position based on its velocity
 	if (!destroyed)
 	{
-		asteroidShape.move(velocity);
+        std::cout << "Velocity: " << velocity.x << " " << velocity.y << std::endl;
+        asteroidShape.move(velocity);
 
 		sf::Vector2f position = asteroidShape.getPosition();
 		sf::Vector2u windowSize = window.getSize();

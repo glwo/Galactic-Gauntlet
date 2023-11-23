@@ -2,6 +2,7 @@
 #include "classes/Player.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 bool isGameOver = false;
 
