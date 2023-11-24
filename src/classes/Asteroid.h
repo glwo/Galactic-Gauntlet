@@ -26,6 +26,7 @@ private:
     sf::Vector2f velocity;
     float speed;
     bool destroyed; 
+    void moveAsteroid();
 };
 
 #endif // ASTEROID_H

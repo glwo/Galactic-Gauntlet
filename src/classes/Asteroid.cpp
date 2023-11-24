@@ -6,6 +6,7 @@
 #include <SFML/System.hpp>
 
 Asteroid::Asteroid(sf::Vector2f position, float rotation, float size)
+	:destroyed(false)
 {
 	asteroidShape = sf::ConvexShape(8);
 	asteroidShape.setFillColor(sf::Color::Red);
@@ -31,6 +32,7 @@ Asteroid::Asteroid(sf::Vector2f position, float rotation, float size)
 	sf::Vector2f velocity = sf::Vector2f(std::cos(angle * 3.14159265f / 180.0f), std::sin(angle * 3.14159265f / 180.0f)) * speed;
 
 	setVelocity(velocity);
+    // setVelocity({1, 1});
 }
 
 Asteroid Asteroid::createRandomAsteroid(sf::RenderWindow& window, const Player& player)
@@ -64,16 +66,23 @@ Asteroid Asteroid::createRandomAsteroid(sf::RenderWindow& window, const Player& 
 	float angle = rotationDist(gen);
 	asteroid.setVelocity(sf::Vector2f(std::cos(angle * 3.14159265f / 180.0f), std::sin(angle * 3.14159265f / 180.0f)) * speed);
 
+	// asteroid.setVelocity(sf::Vector2f({1, 1}));
+
 	return asteroid;
 }
 
 void Asteroid::update(sf::RenderWindow& window)
 {
 	// Update the asteroid's position based on its velocity
+
 	if (!destroyed)
 	{
-        std::cout << "Velocity: " << velocity.x << " " << velocity.y << std::endl;
-        asteroidShape.move(velocity);
+		//  std::cout << "Asteroid Update - Before Move" << std::endl;
+        // std::cout << "Velocity: " << velocity.x << " " << velocity.y << std::endl;
+        // asteroidShape.move(velocity);
+		moveAsteroid();
+
+		// std::cout << "Asteroid Update - After Move" << std::endl;
 
 		sf::Vector2f position = asteroidShape.getPosition();
 		sf::Vector2u windowSize = window.getSize();
@@ -135,4 +144,8 @@ void Asteroid::destroy()
 {
     destroyed = true;
     // Additional logic for explosion animation or any other effects
+}
+
+void Asteroid::moveAsteroid() {
+  asteroidShape.move(velocity);
 }

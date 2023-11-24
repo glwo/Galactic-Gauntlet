@@ -52,7 +52,10 @@ int main()
 
 			for (auto& asteroid : asteroids)
 			{
+				// std::cout << "Initial Asteroid Position: " << asteroid.getPosition().x << ", " << asteroid.getPosition().y << std::endl;
+                // std::cout << "Ateroid start update" << std::endl;
 				asteroid.update(window);
+                // std::cout << "Ateroid end update" << std::endl;
 				if (player.isCollidingWithAsteroid(asteroid))
 				{
 					player.handleAsteroidCollision(asteroid);
