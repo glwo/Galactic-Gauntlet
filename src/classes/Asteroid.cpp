@@ -5,8 +5,9 @@
 #include <iostream>
 #include <SFML/System.hpp>
 
+
 Asteroid::Asteroid(sf::Vector2f position, float rotation, float size)
-	:destroyed(false)
+	:destroyed(false), isExploding(false)
 {
 	asteroidShape = sf::ConvexShape(8);
 	asteroidShape.setFillColor(sf::Color::Red);
@@ -30,6 +31,14 @@ Asteroid::Asteroid(sf::Vector2f position, float rotation, float size)
 	std::uniform_real_distribution<float> angleDist(0.0f, 360.0f);
 	float angle = angleDist(gen);
 	sf::Vector2f velocity = sf::Vector2f(std::cos(angle * 3.14159265f / 180.0f), std::sin(angle * 3.14159265f / 180.0f)) * speed;
+
+	if (!explosionTexture.loadFromFile("src/textures/explosion00.png")) {
+        // Handle texture loading failure
+    }
+
+	explosionSprite.setTexture(explosionTexture);
+    explosionSprite.setOrigin(explosionTexture.getSize().x / 2.0f, explosionTexture.getSize().y / 2.0f);
+    explosionSprite.setPosition(position);
 
 	setVelocity(velocity);
     // setVelocity({1, 1});
@@ -74,8 +83,25 @@ Asteroid Asteroid::createRandomAsteroid(sf::RenderWindow& window, const Player& 
 void Asteroid::update(sf::RenderWindow& window)
 {
 	// Update the asteroid's position based on its velocity
+	if (isExploding) {
+        // Update explosion animation
+        // For example, you can animate the sprite frames or scale it down over time
+        // Here, I'll just scale it down for simplicity
+        explosionSprite.setScale(explosionSprite.getScale() * 0.98f);
 
-	if (!destroyed)
+        // Update the position of the explosion sprite based on the position of the asteroid
+        explosionSprite.setPosition(asteroidShape.getPosition());
+
+        window.draw(explosionSprite);
+
+        if (explosionSprite.getScale().x < 0.1f) {
+            // Reset explosion animation
+            isExploding = false;
+            explosionSprite.setScale(1.0f, 1.0f);
+        }
+    }
+
+	else if (!destroyed)
 	{
 		//  std::cout << "Asteroid Update - Before Move" << std::endl;
         // std::cout << "Velocity: " << velocity.x << " " << velocity.y << std::endl;
@@ -140,10 +166,16 @@ bool Asteroid::isDestroyed() const
     return destroyed;
 }
 
-void Asteroid::destroy()
-{
+void Asteroid::destroy() {
+    if (!destroyed) {
+        isExploding = true;
+        // Additional logic for explosion animation or any other effects
+
+        // For example, reset the asteroid position off-screen
+        asteroidShape.setPosition(-1000, -1000);
+    }
+
     destroyed = true;
-    // Additional logic for explosion animation or any other effects
 }
 
 void Asteroid::moveAsteroid() {

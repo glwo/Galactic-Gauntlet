@@ -42,4 +42,5 @@ bool Bullet::isActive() const
 void Bullet::deactivate()
 {
     active = false;
+    bulletShape.setPosition(-100.0f, -100.0f); 
 }

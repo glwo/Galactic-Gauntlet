@@ -3,6 +3,9 @@
 #define ASTEROID_H
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
+
 
 class Player;  // Forward declaration
 
@@ -27,6 +30,9 @@ private:
     float speed;
     bool destroyed; 
     void moveAsteroid();
+    sf::Sprite explosionSprite;
+    sf::Texture explosionTexture;
+    bool isExploding;
 };
 
 #endif // ASTEROID_H
