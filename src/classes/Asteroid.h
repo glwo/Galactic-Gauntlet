@@ -33,6 +33,7 @@ private:
     sf::Sprite explosionSprite;
     sf::Texture explosionTexture;
     bool isExploding;
+    sf::CircleShape explosionShape;
 };
 
 #endif // ASTEROID_H
