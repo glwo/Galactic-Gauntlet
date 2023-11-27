@@ -10,7 +10,7 @@ Asteroid::Asteroid(sf::Vector2f position, float rotation, float size) :
 	isExploding(false)
 {
 	asteroidShape = sf::ConvexShape(8);
-	asteroidShape.setFillColor(sf::Color::Red);
+	asteroidShape.setFillColor(sf::Color(255, 0, 0, 128));
 	asteroidShape.setPosition(position);
 	asteroidShape.setRotation(rotation);
 
@@ -24,9 +24,10 @@ Asteroid::Asteroid(sf::Vector2f position, float rotation, float size) :
 	asteroidShape.setPoint(6, sf::Vector2f(5 * size, 20 * size));
 	asteroidShape.setPoint(7, sf::Vector2f(0, 15 * size));
 
-	explosionShape = sf::CircleShape(300.f);
-	explosionShape.setFillColor(sf::Color::Green);
-	explosionShape.setOrigin(50.f, 50.f);
+	// explosionShape = sf::CircleShape(100.f);
+
+	// explosionShape.setOrigin(50, 50);
+	// explosionShape.setFillColor(sf::Color::Blue);
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -38,7 +39,7 @@ Asteroid::Asteroid(sf::Vector2f position, float rotation, float size) :
 
 	if (!explosionTexture.loadFromFile("src/textures/explosion00.png"))
 	{
-		std::cout << "Texture not loaded" << std::endl;
+		// std::cout << "Texture not loaded" << std::endl;
 	}
 
 	explosionSprite.setTexture(explosionTexture);
@@ -87,48 +88,44 @@ Asteroid Asteroid::createRandomAsteroid(sf::RenderWindow& window, const Player& 
 
 void Asteroid::update(sf::RenderWindow& window)
 {
+	// window.clear();
 	// Update the asteroid's position based on its velocity
 	if (isExploding)
 	{
-		std::cout << "Drawing explosion sprite" << std::endl;
+		// std::cout << "Explosion Scale: " << explosionShape.getScale().x << std::endl;
+		// std::cout << "Explosion Position: (" << explosionShape.getPosition().x << ", " << explosionShape.getPosition().y << ")" << std::endl;
+
 		// Update explosion animation
-		// For example, you can animate the sprite frames or scale it down over time
-		// Here, I'll just scale it down for simplicity
-		// explosionSprite.setScale(explosionSprite.getScale() * 0.98f);
+		explosionSprite.setScale(explosionSprite.getScale() * 0.98f);
 
 		// Update the position of the explosion sprite based on the position of the asteroid
-		// explosionSprite.setPosition(asteroidShape.getPosition());
+		explosionSprite.setPosition(asteroidShape.getPosition());
 
-		explosionShape.setPosition(asteroidShape.getPosition());
-		window.draw(explosionShape);
+		window.draw(asteroidShape);
 
-		// window.draw(explosionSprite);
+		// Draw the explosion sprite
+		window.draw(explosionSprite);
 
-		// if (explosionSprite.getScale().x < 0.1f)
-		// {
-		// 	// Reset explosion animation
-		// 	isExploding = false;
-		// 	explosionSprite.setScale(1.0f, 1.0f);
-		// }
-
-		// asteroidShape.setPosition(-1000, -1000); // Hide
+		if (explosionSprite.getScale().x < 0.1f)
+		{
+			// Reset explosion animation
+			isExploding = false;
+			explosionSprite.setScale(1.0f, 1.0f);
+		}
 	}
-
 	else if (!destroyed)
 	{
-		//  std::cout << "Asteroid Update - Before Move" << std::endl;
-		// std::cout << "Velocity: " << velocity.x << " " << velocity.y << std::endl;
-		// asteroidShape.move(velocity);
+		// Update the position of the asteroid
 		moveAsteroid();
 
-		// std::cout << "Asteroid Update - After Move" << std::endl;
+		// Draw the asteroid and explosion shape
+		window.draw(asteroidShape);
+		window.draw(explosionShape);
 
+		// Check and adjust the asteroid's position if it goes off-screen
 		sf::Vector2f position = asteroidShape.getPosition();
 		sf::Vector2u windowSize = window.getSize();
 		sf::FloatRect asteroidBounds = asteroidShape.getGlobalBounds();
-
-		std::cout << "Drawing asteroid sprite" << std::endl;
-		window.draw(asteroidShape);
 
 		if (position.x + asteroidBounds.width / 2 < 0.0f)
 			asteroidShape.setPosition(windowSize.x + asteroidBounds.width / 2, position.y);
@@ -141,11 +138,7 @@ void Asteroid::update(sf::RenderWindow& window)
 			asteroidShape.setPosition(position.x, -asteroidBounds.height / 2);
 	}
 
-	if (destroyed)
-	{
-		// asteroidShape.setPosition(-1000, -1000);
-	}
-
+	// Clear the window and update display
 	// window.display();
 }
 
@@ -194,10 +187,10 @@ void Asteroid::destroy()
 	if (!destroyed)
 	{
 		isExploding = true;
-		// Additional logic for explosion animation or any other effects
+		// // Additional logic for explosion animation or any other effects
 
-		// For example, reset the asteroid position off-screen
-		asteroidShape.setPosition(-1000, -1000);
+		// // For example, reset the asteroid position off-screen
+		// asteroidShape.setPosition(-1000, -1000);
 	}
 
 	destroyed = true;
