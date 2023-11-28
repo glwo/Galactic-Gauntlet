@@ -190,7 +190,7 @@ void Asteroid::destroy()
 		// // Additional logic for explosion animation or any other effects
 
 		// // For example, reset the asteroid position off-screen
-		// asteroidShape.setPosition(-1000, -1000);
+		asteroidShape.setPosition(-1000, -1000);
 	}
 
 	destroyed = true;
