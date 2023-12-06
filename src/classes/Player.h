@@ -12,7 +12,7 @@ public:
     Player(sf::RenderWindow& window);
     void update();
     void draw(sf::RenderWindow& window);
-     bool isCollidingWithAsteroid(const Asteroid& asteroid) const; 
+    bool isCollidingWithAsteroid(const Asteroid& asteroid) const; 
     void handleAsteroidCollision(const Asteroid& asteroid);
     bool isCollidingWithBullet(const Bullet& bullet) const;
 
@@ -24,6 +24,8 @@ public:
     void resetGame();
     void requestGameRestart();
     int getLives() const;
+    int getScore() const;
+    void incrementScore(int points);
 
     // New method to retrieve player position
     sf::Vector2f getPosition() const;
@@ -49,6 +51,7 @@ private:
     bool gameOver;
     bool gameRestartRequested;
     int lives;
+    int score;
 
     void teleportToRandomLocation();
 };

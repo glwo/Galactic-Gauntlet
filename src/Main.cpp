@@ -1,5 +1,6 @@
 #include "classes/Asteroid.h"
 #include "classes/Player.h"
+#include "classes/HighScoreManager.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -14,6 +15,7 @@ int main()
 
 	Player player(window);
 	std::vector<Asteroid> asteroids;
+	HighScoreManager highScoreManager;
 
 	sf::Clock asteroidSpawnTimer;
 	float asteroidSpawnInterval = 2.0f;
@@ -111,6 +113,9 @@ int main()
 			gameOverText.setCharacterSize(50);
 			gameOverText.setFillColor(sf::Color::Red);
 			gameOverText.setPosition(400, 300);
+
+			highScoreManager.addScore(player.getScore());
+    		highScoreManager.saveScores();
 
 			window.draw(gameOverText);
 

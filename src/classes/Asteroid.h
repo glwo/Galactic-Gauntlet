@@ -12,12 +12,12 @@ class Player;  // Forward declaration
 class Asteroid
 {
 public:
-    Asteroid(sf::Vector2f position, float rotation, float size);
+    Asteroid(sf::Vector2f position, float rotation, float size, Player& player);
     void update(sf::RenderWindow& window); // Pass the window as a parameter
     void draw(sf::RenderWindow& window) const;
     const sf::ConvexShape& getAsteroidShape() const;
     bool isCollidingWith(const sf::FloatRect& otherBounds) const;
-    static Asteroid createRandomAsteroid(sf::RenderWindow& window, const Player& player);
+    static Asteroid createRandomAsteroid(sf::RenderWindow& window, Player& player);
     void setVelocity(const sf::Vector2f& newVelocity);
     static constexpr float AsteroidHitboxMultiplier = 0.5f;
     sf::FloatRect getCollisionBounds() const;
@@ -34,6 +34,7 @@ private:
     sf::Texture explosionTexture;
     bool isExploding;
     sf::CircleShape explosionShape;
+    Player& player; 
 };
 
 #endif // ASTEROID_H

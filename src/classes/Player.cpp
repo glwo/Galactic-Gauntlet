@@ -13,7 +13,8 @@ Player::Player(sf::RenderWindow& window) :
     invulnerable(false),
     reviveDelay(3.0f),
     gameRestartRequested(false),
-    lives(3)
+    lives(3),
+	score(0)
 
 {
 	playerShape = sf::ConvexShape(3);			   // Create a triangle shape
@@ -216,4 +217,12 @@ int Player::getLives() const {
 std::vector<Bullet>& Player::getBullets()
 {
     return bullets;
+}
+int Player::getScore() const {
+	return score;
+}
+
+void Player::incrementScore(int points)
+{
+    score += points;
 }

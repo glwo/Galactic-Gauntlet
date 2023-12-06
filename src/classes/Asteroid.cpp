@@ -5,9 +5,10 @@
 #include <iostream>
 #include <random>
 
-Asteroid::Asteroid(sf::Vector2f position, float rotation, float size) :
+Asteroid::Asteroid(sf::Vector2f position, float rotation, float size, Player& player) :
 	destroyed(false),
-	isExploding(false)
+	isExploding(false),
+	player(player)
 {
 	asteroidShape = sf::ConvexShape(8);
 	asteroidShape.setFillColor(sf::Color(255, 0, 0, 128));
@@ -50,7 +51,7 @@ Asteroid::Asteroid(sf::Vector2f position, float rotation, float size) :
 	// setVelocity({1, 1});
 }
 
-Asteroid Asteroid::createRandomAsteroid(sf::RenderWindow& window, const Player& player)
+Asteroid Asteroid::createRandomAsteroid(sf::RenderWindow& window, Player& player)
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -76,7 +77,7 @@ Asteroid Asteroid::createRandomAsteroid(sf::RenderWindow& window, const Player& 
 	// std::cout << "Generated Rotation: " << rotation << std::endl;
 	// std::cout << "Generated Speed: " << speed << std::endl;
 
-	Asteroid asteroid(position, rotation, 3.0f);
+	Asteroid asteroid(position, rotation, 3.0f, player);
 
 	float angle = rotationDist(gen);
 	asteroid.setVelocity(sf::Vector2f(std::cos(angle * 3.14159265f / 180.0f), std::sin(angle * 3.14159265f / 180.0f)) * speed);
