@@ -202,6 +202,7 @@ void Player::resetGame()
 {
     gameRestartRequested = false;
     lives = 3;
+	score = 0;
     // Reset any other game-related variables as needed
 }
 

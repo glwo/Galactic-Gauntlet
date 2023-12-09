@@ -1,6 +1,6 @@
 #include "classes/Asteroid.h"
-#include "classes/Player.h"
 #include "classes/HighScoreManager.h"
+#include "classes/Player.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -83,6 +83,7 @@ int main()
 					{
 						asteroid.destroy();
 						bullet.deactivate();
+						player.incrementScore(10);
 					}
 				}
 			}
@@ -105,6 +106,14 @@ int main()
 		livesText.setFillColor(sf::Color::White);
 		livesText.setPosition(10, 10);
 
+		sf::Text scoreText;
+		scoreText.setFont(font); // Set the font for the score text
+		scoreText.setString("Score: " + std::to_string(player.getScore()));
+		scoreText.setCharacterSize(30);
+		scoreText.setFillColor(sf::Color::White);
+		// Adjusted position for the top right
+		scoreText.setPosition(window.getSize().x - scoreText.getLocalBounds().width - 10, 10);
+
 		if (isGameOver)
 		{
 			sf::Text gameOverText;
@@ -112,12 +121,33 @@ int main()
 			gameOverText.setString("Game Over!");
 			gameOverText.setCharacterSize(50);
 			gameOverText.setFillColor(sf::Color::Red);
-			gameOverText.setPosition(400, 300);
+
+			// Center the "Game Over" text
+			sf::FloatRect textRect = gameOverText.getLocalBounds();
+			gameOverText.setPosition(window.getSize().x / 2 - textRect.width / 2, 300);
 
 			highScoreManager.addScore(player.getScore());
-    		highScoreManager.saveScores();
+			highScoreManager.saveScores();
+
+			// Display three highest scores
+			sf::Text highScoresText;
+			highScoresText.setFont(font);
+			highScoresText.setCharacterSize(30);
+			highScoresText.setFillColor(sf::Color::White);
+
+			// Load scores from the manager
+			const std::vector<int>& scores = highScoreManager.getScores();
+			if (!scores.empty())
+			{
+				highScoresText.setString("High Scores:\n1. " + std::to_string(scores[0]) + "\n2. " + std::to_string(scores[1]) + "\n3. " + std::to_string(scores[2]));
+			}
+
+			// Center the high scores text
+			textRect = highScoresText.getLocalBounds();
+			highScoresText.setPosition(window.getSize().x / 2 - textRect.width / 2, 350);
 
 			window.draw(gameOverText);
+			window.draw(highScoresText);
 
 			// Display "Play Again" button
 			sf::Text playAgainText;
@@ -125,10 +155,13 @@ int main()
 			playAgainText.setString("Play Again");
 			playAgainText.setCharacterSize(30);
 			playAgainText.setFillColor(sf::Color::White);
-			playAgainText.setPosition(430, 410); // Adjusted position
+
+			// Center the "Play Again" text
+			textRect = playAgainText.getLocalBounds();
+			playAgainText.setPosition(window.getSize().x / 2 - textRect.width / 2, 500);
 
 			sf::RectangleShape playAgainButton(sf::Vector2f(200, 50));
-			playAgainButton.setPosition(400, 400);
+			playAgainButton.setPosition(window.getSize().x / 2 - 100, 550);
 
 			// Change button color when the mouse hovers over it
 			if (playAgainButton.getGlobalBounds().contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(window))))
@@ -162,6 +195,7 @@ int main()
 		}
 
 		window.draw(livesText); // Draw lives text outside the condition
+		window.draw(scoreText);
 		window.display();
 		sf::sleep(sf::milliseconds(8));
 	}
