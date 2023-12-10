@@ -6,6 +6,7 @@
 #include <iostream>
 
 bool isGameOver = false;
+bool scoreNeedsUpdate = true;
 
 void GameOver(sf::RenderWindow& window, Player& player, HighScoreManager& highScoreManager, std::vector<Asteroid>& asteroids);
 
@@ -17,7 +18,11 @@ void GameOver(sf::RenderWindow& window, Player& player, HighScoreManager& highSc
         // Handle font loading failure
     }
 
-    highScoreManager.addScore(player.getScore());
+    if (scoreNeedsUpdate)
+    {
+        highScoreManager.addScore(player.getScore());
+        scoreNeedsUpdate = false; // Set the flag to false once the score is updated
+    }
 
     sf::Text gameOverText;
     gameOverText.setFont(font);
@@ -27,8 +32,6 @@ void GameOver(sf::RenderWindow& window, Player& player, HighScoreManager& highSc
 
     sf::FloatRect textRect = gameOverText.getLocalBounds();
     gameOverText.setPosition(window.getSize().x / 2 - textRect.width / 2, 300);
-
-    highScoreManager.addScore(player.getScore());
 
     sf::Text highScoresText;
     highScoresText.setFont(font);
@@ -67,6 +70,7 @@ void GameOver(sf::RenderWindow& window, Player& player, HighScoreManager& highSc
             player.resetGame();
             isGameOver = false;
             asteroids.clear();
+            scoreNeedsUpdate = true; // Set the flag to true when restarting the game
         }
     }
     else
