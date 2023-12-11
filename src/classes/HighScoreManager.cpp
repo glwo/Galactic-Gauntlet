@@ -1,32 +1,29 @@
 #include "HighScoreManager.h"
-#include <iostream>
 
-HighScoreManager::HighScoreManager() : 
-  scores{0, 0, 0} {
+HighScoreManager::HighScoreManager() {
+    // Initialize with default entries
+    scoreEntries = {{"Player1", 0}, {"Player2", 0}, {"Player3", 0}};
 }
 
-void HighScoreManager::addScore(int newScore) {
+void HighScoreManager::addScore(const std::string& playerName, int newScore) {
+    // Insert new score and name
+    scoreEntries.push_back({playerName, newScore});
 
-  // Insert new score   
-  std::cout << "Before: ";
-  for(int score : scores) {
-    std::cout << score << " "; 
-  }
-  std::cout << "\n";
-  scores.push_back(newScore);
-  
-  // Sort and trim vector
-  std::sort(scores.rbegin(), scores.rend()); 
-  scores.resize(std::min(scores.size(), size_t(3)));
+    // Sort in descending order based on scores
+    std::sort(scoreEntries.begin(), scoreEntries.end(),
+              [](const auto& a, const auto& b) { return a.second > b.second; });
 
-  std::cout << "After: ";
-  for(int score : scores) {
-    std::cout << score << " ";
-  }
-  std::cout << "\n";
+    // Trim to max size of 3
+    scoreEntries.resize(std::min(scoreEntries.size(), size_t(3)));
+
+    // Display the updated scores
+    std::cout << "High Scores:\n";
+    for (const auto& entry : scoreEntries) {
+        std::cout << entry.first << ": " << entry.second << "\n";
+    }
 }
 
-const std::vector<int>& HighScoreManager::getScores() const {
-  return scores;
+const std::vector<std::pair<std::string, int>>& HighScoreManager::getScores() const {
+    return scoreEntries;
 }
 

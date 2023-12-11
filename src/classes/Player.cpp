@@ -227,3 +227,30 @@ void Player::incrementScore(int points)
 {
     score += points;
 }
+
+void Player::handleTextEntered(sf::Uint32 unicode) {
+    if (unicode < 128) {
+        if (unicode == '\b' && !currentInput.isEmpty()) {
+            // Handle backspace
+            currentInput.erase(currentInput.getSize() - 1);
+        } else {
+            // Handle regular ASCII characters
+            currentInput += static_cast<char>(unicode);
+        }
+    }
+}
+
+void Player::drawTextInput(sf::RenderWindow& window) {
+    // Draw the text input box
+	sf::Font font;
+	if (!font.loadFromFile("arial.ttf"))
+	{
+		// Handle font loading failure
+	}
+	
+    sf::Text inputText(currentInput, font, 20);
+    inputText.setFillColor(sf::Color::White);
+    inputText.setPosition(window.getSize().x / 2 - 100, 500);
+
+    window.draw(inputText);
+}
